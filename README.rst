@@ -26,7 +26,17 @@ Simple wrapper to load dataset files in pandas.DataFrame objects
 Features
 --------
 
-* TODO
+- Uses file extension as heuristic to determine input format
+- Provides metadata using pyreadstat objects when appropriate
+- Supports: csv, tsv, xlsx, sav, dta (unreliable), sqlite3 
+
+Examples
+--------
+
+.. code-block:: python
+
+  import pandect
+  data, meta = pandect.load(input_file_name)
 
 Credits
 -------
