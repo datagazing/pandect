@@ -16,7 +16,7 @@ pandect
 
 
 
-Simple wrapper to load dataset files in pandas.DataFrame objects
+Simple wrapper to load dataset files into pandas.DataFrame objects
 
 
 * Free software: MIT license
@@ -26,9 +26,9 @@ Simple wrapper to load dataset files in pandas.DataFrame objects
 Features
 --------
 
-- Uses file extension as heuristic to determine input format
-- Provides metadata using pyreadstat objects when appropriate
-- Supports: csv, tsv, xlsx, sav, dta (unreliable), sqlite3 
+* Uses file extension as heuristic to determine input format
+* Provides metadata using pyreadstat objects when appropriate
+* Supports: csv, tsv, xlsx, sav, dta (unreliable), sqlite3 
 
 Examples
 --------
