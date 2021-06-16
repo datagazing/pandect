@@ -4,17 +4,72 @@ import logging
 import os
 import re
 import sys
+import typing
 
+myself = pathlib.Path(__file__).stem
+
+# configure library-specific logger
+logger = logging.getLogger(myself)
+logging.getLogger(myself).addHandler(logging.NullHandler())
+
+import attrs
 import pandas
 import pyreadstat
+
+import optini
 
 ########################################################################
 
 def expand_path(x):
-    """Helper function to expand ~ and environment variables in paths"""
+    """Expand ~ and environment variables in paths"""
     x = os.path.expandvars(os.path.expanduser(x))
-    logging.debug(f"expanded: {x}")
+    logger.debug(f"expanded: {x}")
     return x
+
+########################################################################
+
+@attr.s(auto_attribs=True)
+class Pandect:
+    """
+    """
+    source: str
+    sep: str = ','
+    expand: bool = True,
+    flags: enum = re.IGNORECASE
+    table: str = None
+
+    def __attrs_post_init__(self):
+        """Constructor"""
+        self._data, self._meta = load(source,
+            sep=',',
+            expand=True,
+            flags=re.IGNORECASE,
+            table=None,
+        )
+        logger.debug(f"loaded data")
+
+    def save(self, output):
+        save(self._data, output, self._meta)
+
+def save(data, output, meta=None, flags=re.IGNORECASE):
+    """
+    """
+    #column_names_to_labels
+    if re.search('\.csv$', output, flags):
+        data.to_csv(output, sep=',')
+    elif re.search('\.tsv$', output, flags):
+        data.to_csv(output, sep='\t')
+    elif re.search('\.xlsx$', output, flags):
+        data.to_excel(output)
+    elif re.search('\.sav$', output, flags):
+        #pyreadstat.write_sav(data, output, column_labels=names)
+        pyreadstat.write_sav(data, output)
+    elif re.search('\.dta$', output, flags):
+        pyreadstat.write_dta(data, output)
+    else:
+        logger.error(f"unknown output format: {output}")
+        return
+    logger.info(f"wrote {output}")
 
 def load(source,
     sep=',',
@@ -115,3 +170,11 @@ def load(source,
     logging.info(f"number of variables: {len(vars)}")
     logging.info(f"observations: {len(data)}")
     return(data, meta)
+
+########################################################################
+
+def sav2dta():
+    """Entry point for sav2dta command line script"""
+    optini.Config(appname='sav2dta', io=True)
+    data, meta = load(optini.opt.input)
+    save(data, optini.opt.output)
