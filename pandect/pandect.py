@@ -43,36 +43,42 @@ import logging
 import os
 import pathlib
 import re
+import sqlite3
 import sys
-
-myself = pathlib.Path(__file__).stem
-
-logger = logging.getLogger(myself)
-logging.getLogger(myself).addHandler(logging.NullHandler())
 
 import pandas
 import pyreadstat
 
 import optini
 
+myself = pathlib.Path(__file__).stem
+
+logger = logging.getLogger(myself)
+logging.getLogger(myself).addHandler(logging.NullHandler())
+
 ########################################################################
 
 # exceptions
 
+
 class Error(Exception):
     pass
+
 
 class UnknownInputFormat(Error):
     def __init__(self, x):
         self.message = f"unknown input format: {x}"
 
+
 class UnknownOutputFormat(Error):
     def __init__(self, x):
         self.message = f"unknown output format: {x}"
 
+
 ########################################################################
 
 # helper functions
+
 
 def expand_path(x):
     """Expand ~ and environment variables in paths"""
@@ -80,7 +86,9 @@ def expand_path(x):
     logger.debug(f"expanded: {x}")
     return x
 
+
 ########################################################################
+
 
 def save(data, output, meta=None, flags=re.IGNORECASE, version=None):
     """
@@ -103,21 +111,27 @@ def save(data, output, meta=None, flags=re.IGNORECASE, version=None):
     if meta is not None:
         names = meta.column_names_to_labels
 
-    if re.search('\.csv$', output, flags):
+    if re.search(r'\.csv$', output, flags):
         data.to_csv(output, sep=',')
-    elif re.search('\.tsv$', output, flags):
+    elif re.search(r'\.tsv$', output, flags):
         data.to_csv(output, sep='\t')
-    elif re.search('\.xlsx$', output, flags):
-        data.to_excel(output)
-    elif re.search('\.sav$', output, flags):
+    elif re.search(r'\.xlsx$', output, flags):
+        data.to_excel(output, index=False)
+    elif re.search(r'\.sav$', output, flags):
         pyreadstat.write_sav(data, output, column_labels=names)
-    elif re.search('\.dta$', output, flags):
+    elif re.search(r'\.dta$', output, flags):
         version = version if version else 14
-        pyreadstat.write_dta(data, output, version=version, column_labels=names)
+        pyreadstat.write_dta(
+            data,
+            output,
+            version=version,
+            column_labels=names,
+        )
     else:
         logger.error(f"unknown output format: {output}")
         raise UnknownOutputFormat(output)
     logger.info(f"wrote {output}")
+
 
 def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
     """
@@ -162,18 +176,18 @@ def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
             logging.error(f"file not found: {source}")
             raise FileNotFoundError(source)
 
-        if re.search('\.csv$', source, flags):
+        if re.search(r'\.csv$', source, flags):
             data = pandas.read_csv(source, sep=sep)
-        elif re.search('\.tsv$', source, flags):
+        elif re.search(r'\.tsv$', source, flags):
             data = pandas.read_csv(source, sep='\t')
-        elif re.search('\.xlsx$', source, flags):
+        elif re.search(r'\.xlsx$', source, flags):
             data = pandas.read_excel(source)
-        elif re.search('\.sav$', source, flags):
+        elif re.search(r'\.sav$', source, flags):
             data, meta = pyreadstat.read_sav(source)
-        elif re.search('\.dta$', source, flags):
-            #logging.warning("loading dta files is known to cause segfaults")
+        elif re.search(r'\.dta$', source, flags):
+            # logging.warning("loading dta files is known to cause segfaults")
             data, meta = pyreadstat.read_dta(source)
-        elif re.search('\.sqlite3$', source, flags):
+        elif re.search(r'\.sqlite3$', source, flags):
             if table is None:
                 message = "missing table specification for sqlite"
                 logging.error(message)
@@ -196,9 +210,11 @@ def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
     logging.info(f"observations: {len(data)}")
     return(data, meta)
 
+
 ########################################################################
 
 # helper functions for command line utilities
+
 
 def _arg2input():
     """Return input file name from -i or first unparsed argument"""
@@ -206,12 +222,13 @@ def _arg2input():
     if optini.opt.input is not None:
         return optini.opt.input
     elif len(optini.opt._unparsed) > 0:
-        logger.debug(f"-i not specified, using first unparsed argument")
+        logger.debug('-i not specified, using first unparsed argument')
         return optini.opt._unparsed[0]
     else:
-        logger.error(f"no input found; try -i <input>")
-        logger.error(f"aborting")
+        logger.error('no input found; try -i <input>')
+        logger.error('aborting')
         sys.exit(1)
+
 
 def _arg2output():
     """Return output file name from -o or secend unparsed argument"""
@@ -219,17 +236,19 @@ def _arg2output():
     if optini.opt.output is not None:
         return optini.opt.output
     elif len(optini.opt._unparsed) > 1:
-        logger.debug(f"-o not specified, using second unparsed argument")
+        logger.debug('-o not specified, using second unparsed argument')
         return optini.opt._unparsed[1]
     else:
-        logger.error(f"no output found; try -o <output>")
-        logger.error(f"aborting")
+        logger.error('no output found; try -o <output>')
+        logger.error('aborting')
         sys.exit(1)
+
 
 ########################################################################
 
 # command line utilities
 # flit packages these functions as separate scripts
+
 
 def sav2dta():
     """Entry point for sav2dta command line script"""
@@ -245,8 +264,9 @@ def sav2dta():
     try:
         data, meta = load(input)
         save(data=data, output=output, meta=meta)
-    except (FileNotFoundError, Error) as e:
+    except (FileNotFoundError, Error):
         sys.exit(1)
+
 
 def pandect():
     """Entry point for pandect command line script"""
@@ -263,8 +283,9 @@ def pandect():
     try:
         data, meta = load(input)
         save(data=data, output=output, meta=meta)
-    except (FileNotFoundError, Error) as e:
+    except (FileNotFoundError, Error):
         sys.exit(1)
+
 
 ########################################################################
 
