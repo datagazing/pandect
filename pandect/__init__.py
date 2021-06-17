@@ -2,6 +2,6 @@
 
 __author__ = """Brendan Strejcek"""
 __email__ = 'brendan@datagazing.com'
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 from .pandect import Pandect, load, save, pandect, sav2dta
