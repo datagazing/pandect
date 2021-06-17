@@ -10,7 +10,8 @@ home-page = "https://github.com/datagazing/pandect"
 classifiers = [ "License :: OSI Approved :: MIT License",]
 description-file = "README.rst"
 requires-python = ">=3.7"
-requires = ["attrs", "optini", "pandas", "pyreadstat"]
+requires = ["optini", "pandas", "pyreadstat", "openpyxl"]
 
 [tool.flit.scripts]
 sav2dta = "pandect:sav2dta"
+pandect = "pandect:pandect"

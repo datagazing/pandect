@@ -79,5 +79,5 @@ release: dist ## package and upload a release
 dist: clean ## builds source and wheel package
 	flit build
 
-install: clean ## install the package to the active Python's site-packages
-	python3 setup.py install
+install: clean dist ## install the package to the active Python's site-packages
+	pip3 install dist/*.tar.gz
