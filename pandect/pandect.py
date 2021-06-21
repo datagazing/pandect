@@ -132,12 +132,12 @@ def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
     meta = pyreadstat.metadata_container()
 
     if type(source) is str:
-        logging.info(f"data source: {source}")
+        logger.info(f"data source: {source}")
 
         if expand:
             source = expand_path(source)
         if not os.path.exists(source):
-            logging.error(f"file not found: {source}")
+            logger.error(f"file not found: {source}")
             raise FileNotFoundError(source)
 
         if re.search(r'\.csv$', source, flags):
@@ -149,29 +149,30 @@ def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
         elif re.search(r'\.sav$', source, flags):
             data, meta = pyreadstat.read_sav(source)
         elif re.search(r'\.dta$', source, flags):
-            # logging.warning("loading dta files is known to cause segfaults")
+            # logger.warning("loading dta files is known to cause segfaults")
             data, meta = pyreadstat.read_dta(source)
         elif re.search(r'\.sqlite3$', source, flags):
             if table is None:
                 message = "missing table specification for sqlite"
-                logging.error(message)
+                logger.error(message)
                 raise IOError(message)
             connection = sqlite3.connect(source)
             query = "SELECT * FROM %s" % (table)
             data = pandas.read_sql_query(query, connection)
         else:
             message = f"unrecognized file type {source}"
-            logging.error(message)
+            logger.error(message)
             raise UnknownInputFormat(message)
     else:
         message = f"unrecognized data source {source}"
-        logging.error(message)
+        logger.error(message)
+        logger.debug(f"type(source) = {type(source)}")
         raise UnknownInputFormat(message)
 
     vars = list(data)
-    logging.info('loaded data')
-    logging.info(f"number of variables: {len(vars)}")
-    logging.info(f"observations: {len(data)}")
+    logger.info('loaded data')
+    logger.info(f"number of variables: {len(vars)}")
+    logger.info(f"observations: {len(data)}")
     return(data, meta)
 
 
