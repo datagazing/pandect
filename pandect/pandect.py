@@ -59,8 +59,11 @@ def save(data, output, meta=None, flags=re.IGNORECASE, version=None):
     """
     Procedure to save data frame with optional metadata to file
 
+    - Raises: UnknownOutputFormat
+
     Parameters
     ----------
+
     data : pandas.DataFrame
         Data
     output : str
@@ -71,10 +74,6 @@ def save(data, output, meta=None, flags=re.IGNORECASE, version=None):
         Regex match flags (relevant to determining file types)
     version : int, default=None
         Output format version (applies only to dta output currently)
-
-    Raises
-    ------
-    UnknownOutputFormat
     """
     names = None
     if meta is not None:
@@ -109,6 +108,7 @@ def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
     - Uses file extension as heuristic to determine input format
     - Supports: csv, tsv, xlsx, sav, dta, sqlite3
     - Preserve metadata to the degree possible
+    - Raises: FileNotFoundError, IOError
 
     Parameters
     ----------
@@ -127,11 +127,6 @@ def load(source, sep=',', expand=True, flags=re.IGNORECASE, table=None):
         DataFrame object
     meta : pyreadstat.metadata_container
         Metadata (empty if not provided by data source)
-
-    Raises
-    ------
-    FileNotFoundError
-    IOError
     """
 
     meta = pyreadstat.metadata_container()
