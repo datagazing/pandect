@@ -1,42 +1,7 @@
 #!/usr/bin/env python3
 
 """
-Simple wrappers to load and convert common data file types
-
-Features
---------
-
-- Loads data into pandas.DataFrame
-- Preserves metadata to the degree possible
-- Determines file type from filename extensions
-- Provides command line utilities: sav2dta, pandect
-
-Raises
-------
-FileNotFoundError
-IOError
-UnknownInputFormat
-UnknownOutputFormat
-
-Notes
------
-
-Loading dta files is unreliable (bug in pyreadstat, might segfault)
-
-Metadata Objects
-----------------
-
-- pandect uses metadata object format from pyreadstat module
-- See pyreadstat web docs for complete specification
-- Some useful keys:
-    - column_names : list with the names of the columns
-    - column_labels : list with the column labels, if any
-    - column_names_to_labels : dict{column_names: column_labels}
-    - variable_value_labels : dict{variable_names: dict}
-    - variable_to_label : dict{variable_names: label_name}
-    - value_labels : dict{label_name: dict}
-    - variable_measure : nominal, ordinal, scale or unknown
-
+See top level package docstring for documentation
 """
 
 import logging
@@ -106,6 +71,10 @@ def save(data, output, meta=None, flags=re.IGNORECASE, version=None):
         Regex match flags (relevant to determining file types)
     version : int, default=None
         Output format version (applies only to dta output currently)
+
+    Raises
+    ------
+    UnknownOutputFormat
     """
     names = None
     if meta is not None:

@@ -14,7 +14,7 @@ pandect
         :alt: Documentation Status
 
 
-Top-level package for pandect.
+{__doc__}
 
 Credits
 -------
