@@ -79,4 +79,7 @@ __author__ = """Brendan Strejcek"""
 __email__ = 'brendan@datagazing.com'
 __version__ = '0.3.2'
 
-from .pandect import load, save, pandect, sav2dta # noqa
+from .pandect import load, save, pandect, sav2dta # noqa F401
+from .pandect import Error # noqa F401
+from .pandect import UnknownInputFormat # noqa F401
+from .pandect import UnknownOutputFormat # noqa F401
