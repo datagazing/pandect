@@ -77,6 +77,6 @@ Documentation
 
 __author__ = """Brendan Strejcek"""
 __email__ = 'brendan@datagazing.com'
-__version__ = '0.3.1'
+__version__ = '0.3.2'
 
 from .pandect import load, save, pandect, sav2dta # noqa
