@@ -49,7 +49,7 @@ Convert a data file at the command line:
 
   $ pandect input.csv output.dta
 
-Convert sav data file to dta data file:
+Convert sav data file to dta data file at the command line:
 
 .. code-block:: console
 
